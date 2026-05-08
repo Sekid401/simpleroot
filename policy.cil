@@ -1,0 +1,35 @@
+; RootStarter SELinux Policy
+
+; FIX #5: Declare su_exec type
+(type su_exec)
+
+; FIX #6: typeattribute was declared but never applied — either use it or drop it.
+; Applying it properly here:
+(typeattribute su_domain)
+(typeattributeset su_domain (su_exec))
+
+; Allow shell to execute su binary
+(allow shell su_exec (file (execute execute_no_trans read open getattr)))
+
+; FIX #7: Missing process transition permissions — without these the
+; typetransition rule is declared but can never actually fire.
+(allow shell su_exec (process (transition)))
+(allow su_exec shell (fd (use)))
+
+; Allow su to gain necessary capabilities
+(allow su_exec self (capability (setuid setgid dac_override dac_read_search)))
+; mac_admin/mac_override will be audited loudly on real devices — fine for VM
+(allow su_exec self (capability2 (mac_admin mac_override)))
+
+; Allow su to manage its own process
+(allow su_exec self (process (setcurrent setsched fork execmem)))
+
+; Allow reading /data/adb/
+(allow su_exec adb_data_file (dir (read open search)))
+(allow su_exec adb_data_file (file (read open getattr execute)))
+
+; Domain transition: shell executing su_exec binary becomes su_exec domain
+(typetransition shell su_exec process su_exec)
+
+; Optional: allow untrusted apps to invoke su
+(allow untrusted_app su_exec (file (execute read open getattr)))
