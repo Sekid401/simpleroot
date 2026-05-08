@@ -18,3 +18,23 @@ Breaking Some Apps (only if you didnt put symlinks)
 # Tips
 
 Once you Get Temporary Root put every file except the installer in /data/adb if you wanna and create a service.d, it wont work probably and get autodeleted, Though not recommended as its not persistent somewhy
+
+# Revert
+
+rm /data/su
+
+# Recommended Tools To Use
+
+ADB: Shizuku
+
+# How To Obtain Recommended Tools
+
+Google Play or Apkmirror
+
+# Does it set up symlinks?
+
+No, You have to do it manually
+
+# Why is Shizuku Recommended?
+
+Because it provides adb which is what you need for simpleroot, adb and /data/su
